@@ -1,0 +1,522 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .row {
+        margin-left: 180px; /* Adjust this value based on the width of the expanded navbar */
+        padding: 20px;
+    }
+    .box
+    {
+      
+      width: 1100px;
+      height:400;
+      text-align:center;
+      border: 1px solid #ddd;
+      padding: 20px;
+      margin: auto;
+
+    }
+    .chart-container {
+        height: 600px;
+        width: 800px;
+        position: relative;
+        margin: auto;
+    }
+    
+    
+</style>
+<div class="row">
+    <div class="col-md-6 my-4">
+        <div class="bg-white">
+            <div class="card-body" style="background-color: black; margin: auto;">
+                <div class="box" style="border: 1px solid #ddd; padding: 20px;">
+                    <canvas id="myChart" width="1200" height="600"></canvas>
+                    <form id="yearForm">
+                        <label for="startYear">Start Year:</label>
+                        <input type="radio" id="startYear" name="yearType" value="start" onclick="showChart('start')">
+                    
+                        <label for="endYear">&nbsp;&nbsp;End Year:</label>
+                        <input type="radio" id="endYear" name="yearType" value="end" onclick="showChart('end')">
+                    </form>
+                    <script>
+                        let myChart = null; // Declare myChart variable once
+
+                        function showChart(yearType) {
+                            if (myChart !== null) {
+                                myChart.destroy(); // Destroy the existing chart if it exists
+                            }
+
+                            const ctx = document.getElementById('myChart').getContext('2d');
+                            const labels = [];
+                            const dataValues = [];
+
+                            if (yearType === 'start') {
+                                {% for data in modeldata %}
+                                    {% if data.start_year and data.intensity %}
+                                        labels.push("{{ data.start_year }}");
+                                        dataValues.push({{ data.intensity }});
+                                    {% endif %}
+                                {% endfor %}
+                            } else if (yearType === 'end') {
+                                {% for data in modeldata %}
+                                    {% if data.end_year and data.intensity%}
+                                        labels.push("{{ data.end_year }}");
+                                        dataValues.push({{ data.intensity }});
+                                    {% endif %}
+                                {% endfor %}
+                            }
+
+                            const uniqueLabels = Array.from(new Set(labels));
+
+                            myChart = new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: uniqueLabels.sort(),
+                                    datasets: [{
+                                        label: 'Intensity By Year',
+                                        data: dataValues,
+                                        borderWidth: 1,
+                                        borderColor: 'rgba(54, 162, 235, 1)',
+                                        backgroundColor: 'rgba(54, 11, 235, 0.2)'
+                                    }]
+                                },
+                                                    options: {
+                                    plugins: {
+                                        title: {
+                                            display: true,
+                                            text: 'Intensity By Year', // Your chart title
+                                            font: {
+                                                size: 16, // Adjust the font size as needed
+                                                weight: 'bold' // Set the font weight to bold
+                                            },
+                                            color: 'rgba(255, 255, 255, 1)' // Set the title color to white
+                                        }
+                                    },
+                                    scales: {
+                                        x: {
+                                            grid: {
+                                                color: 'rgba(255, 255, 255, 0.5)' // Change X-axis gridline color to white with some transparency
+                                            },
+                                            title: {
+                                                display: true,
+                                                text: 'Year', // Your X-axis label
+                                                color: 'rgba(255, 255, 255, 1)', // Set the X-axis label color to white
+                                                font: {
+                                                    weight: 'bold' // Set the X-axis label font weight to bold
+                                                }
+                                            },
+                                            ticks: {
+                                                color: 'rgba(255, 255, 255, 1)', // Set X-axis tick color to white
+                                                font: {
+                                                    weight: 'bold' // Set X-axis tick font weight to bold
+                                                }
+                                            }
+                                        },
+                                        y: {
+                                            grid: {
+                                                color: 'rgba(255, 255, 255, 0.2)', // Change Y-axis gridline color to white with lower opacity
+                                                borderDash: [5, 5] // Set the border dash style for grid lines
+                                            },
+                                            zeroLineColor: 'rgba(255, 255, 255, 0.5)', // Change color of the grid line at zero
+                                            beginAtZero: true,
+                                            title: {
+                                                display: true,
+                                                text: 'Intensity', // Your Y-axis label
+                                                color: 'rgba(255, 255, 255, 1)', // Set the Y-axis label color to white
+                                                font: {
+                                                    weight: 'bold' // Set the Y-axis label font weight to bold
+                                                }
+                                            },
+                                            ticks: {
+                                                color: 'rgba(255, 255, 255, 1)', // Set Y-axis tick color to white
+                                                font: {
+                                                    weight: 'bold' // Set Y-axis tick font weight to bold
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- second Chart -->
+<div class="row">
+    <div class="col-md-6 my-4">
+        <div class="bg-white">
+            <div class="card-body" style="background-color: black; margin: auto;">
+                <div class="box" style="border: 1px solid #ddd; padding: 20px;">
+                    <!-- Chart container -->
+                    <div class="chart-container1">
+                        <canvas id="myChart2" width="1400" height="600"></canvas>
+                    </div>
+                    <form id="dataForm">
+                        
+                        <label for="country">Country:</label>
+                        <input type="radio" id="country" name="dataType" value="country" onclick="showData1('country')">
+                        
+                        <label for="region">&nbsp;&nbsp;&nbsp;Region:</label>
+                        <input type="radio" id="region" name="dataType" value="region" onclick="showData1('region')">
+        
+                        <label for="pest">&nbsp;&nbsp;&nbsp;PEST:</label>
+                        <input type="radio" id="pest" name="dataType" value="pest" onclick="showData1('pest')">
+                    </form>
+                </div>
+                <script>
+                    let myChart2 = null;
+                
+                    function showData1(dataType) {
+                        if (myChart2 !== null) {
+                            myChart2.destroy();
+                        }
+                
+                        const data2 = [
+                            {% for item in modeldata %}
+                                {% if item.country and item.relevance and item.region and item.pestle %}
+                                    {
+                                        country: "{{ item.country }}",
+                                        region: "{{ item.region }}",
+                                        pest: "{{ item.pestle }}",
+                                        relevance: {{ item.relevance }}
+                                    },
+                                {% endif %}
+                            {% endfor %}
+                        ];
+                
+                        let filteredData2 = []; 
+                        let labels2 = []; 
+                        let values2 = []; 
+                
+                        if (dataType === 'country') {
+                            filteredData2 = data2.filter(item => item.country);
+                        } else if (dataType === 'region') {
+                            filteredData2 = data2.filter(item => item.region);
+                        } else if (dataType === 'pest') {
+                            filteredData2 = data2.filter(item => item.pest);
+                        }
+                
+                        const uniqueLabels2 = new Set(); 
+                
+                        filteredData2.forEach(item => {
+                            if (!uniqueLabels2.has(item[dataType])) {
+                                uniqueLabels2.add(item[dataType]);
+                                labels2.push(item[dataType]);
+                                values2.push(item.relevance);
+                            }
+                        });
+                
+                        const borderColor = "rgba(255, 99, 132, 1)";
+                        const fillColor = "rgba(255, 99, 132, 0.2)";
+                        const ctx2 = document.getElementById('myChart2').getContext('2d');
+                
+                        myChart2 = new Chart(ctx2, {
+                            type: 'line',
+                            data: {
+                                labels: labels2,
+                                datasets: [{
+                                    label: 'Relevance',
+                                    data: values2,
+                                    fill: 'origin',
+                                    borderColor: borderColor,
+                                    backgroundColor: fillColor,
+                                    tension: 0.4,
+                                    pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                                    pointBorderColor: 'rgba(255, 99, 132, 1)',
+                                    pointRadius: 4,
+                                    pointHoverRadius: 6
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    x: {
+                                        grid: {
+                                            color: 'rgba(255, 255, 255, 0.5)'
+                                        },
+                                        ticks: {
+                                            color: 'rgba(255, 255, 255, 1)',
+                                            font: {
+                                                weight: 'bold'
+                                            }
+                                        }
+                                    },
+                                    y: {
+                                        grid: {
+                                            color: 'rgba(255, 255, 255, 0.2)',
+                                            borderDash: [5, 5]
+                                        },
+                                        zeroLineColor: 'rgba(255, 255, 255, 0.5)',
+                                        beginAtZero: true,
+                                        ticks: {
+                                            color: 'rgba(255, 255, 255, 1)'
+                                        }
+                                    }
+                                },
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: true,
+                                        position: 'top',
+                                        labels: {
+                                            color: 'rgba(255, 255, 255, 1)',
+                                            font: {
+                                                weight: 'bold'
+                                            }
+                                        }
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: 'Relevance by ' + dataType.charAt(0).toUpperCase() + dataType.slice(1),
+                                        color: 'rgba(255, 255, 255, 1)',
+                                        font: {
+                                            weight: 'bold'
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- third Chart -->
+
+<div class="row">
+    <div class="col-md-6 my-4">
+        <div class="bg-white">
+            <div class="card-body" style="background-color: black;">
+                <div class="box" style="border: 1px solid #ddd; padding: 20px;">
+                    <form id="dataForm">
+                        <label for="topic">Topic:</label>
+                        <input type="radio" id="topic" name="dataType" value="topic" onclick="showData2('topic')">
+                        
+                        <label for="sector">&nbsp;&nbsp;Sector:</label>
+                        <input type="radio" id="sector" name="dataType" value="sector" onclick="showData2('sector')">
+    
+                        <label for="source">&nbsp;&nbsp;Source:</label>
+                        <input type="radio" id="source" name="dataType" value="source" onclick="showData2('source')">
+                    </form>
+
+                    <!-- Chart container -->
+                    <div class="chart-container">
+                        <canvas id="myChartC3" width="1400" height="600" ></canvas>
+                    </div>
+                </div>
+                <script>
+                    let myChartC3 = null;
+                
+                    function showData2(dataType) {
+                        if (myChartC3 !== null) {
+                            myChartC3.destroy();
+                        }
+                
+                        const dataC3 = [
+                            {% for itemC3 in modeldata %}
+                                {% if itemC3.topic and itemC3.likelihood and itemC3.sector and itemC3.source %}
+                                    {
+                                        topic: "{{ itemC3.topic }}",
+                                        sector: "{{ itemC3.sector }}",
+                                        source: "{{ itemC3.source }}",
+                                        likelihood: {{ itemC3.likelihood }}
+                                    },
+                                {% endif %}
+                            {% endfor %}
+                        ];
+                
+                        let filteredData3 = []; 
+                        let labels3 = []; 
+                        let values3 = []; 
+                
+                        if (dataType === 'topic') {
+                            filteredData3 = dataC3.filter(itemC3 => itemC3.topic);
+                        } else if (dataType === 'sector') {
+                            filteredData3 = dataC3.filter(itemC3 => itemC3.sector);
+                        } else if (dataType === 'source') {
+                            filteredData3 = dataC3.filter(itemC3 => itemC3.source);
+                        }
+                
+                        const uniqueLabels3 = new Set(); 
+                
+                        filteredData3.forEach(itemC3 => {
+                            if (!uniqueLabels3.has(itemC3[dataType])) {
+                                uniqueLabels3.add(itemC3[dataType]);
+                                labels3.push(itemC3[dataType]);
+                                values3.push(itemC3.likelihood);
+                            }
+                        });
+                
+                        function getRandomColorC3() {
+                            const r = Math.floor(Math.random() * 256);
+                            const g = Math.floor(Math.random() * 256);
+                            const b = Math.floor(Math.random() * 256);
+                            return `rgba(${r}, ${g}, ${b}, 0.6)`;
+                        }
+                
+                        const pestleColorsC3 = labels3.map(labelC3 => getRandomColorC3());
+                
+                        const ctxC3 = document.getElementById('myChartC3').getContext('2d');
+                        myChartC3 = new Chart(ctxC3, {
+                            type: 'polarArea',
+                            data: {
+                                datasets: [{
+                                    label: 'Likelihood by ' + dataType.toUpperCase(),
+                                    data: values3,
+                                    backgroundColor: pestleColorsC3,
+                                    borderColor: pestleColorsC3,
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: 'Likelihood by ' + dataType.toUpperCase()
+                                    },
+                                    legend: {
+                                        position: 'bottom',
+                                    }
+                                },
+                                animation: {
+                                    animateRotate: true,
+                                    animateScale: true
+                                }
+                            }
+                        });
+                    }
+                </script>
+                
+            </div>
+        </div>
+    </div>
+</div>
+<!-- fourth Chart -->
+<div class="row">
+    <div class="col-md-6 my-4">
+        <div class="bg-white">
+            <div class="card-body" style="background-color: black;">
+                <div class="box" style="border: 1px solid #ddd; padding: 20px;">
+                    <form id="dataForm4">
+                        <label for="regionChart4">Region:</label>
+                        <input type="radio" id="regionChart4" name="dataType4" value="region" onclick="showData4('region')">
+                        
+                        <label for="sectorChart4">&nbsp;&nbsp;&nbsp;Sector:</label>
+                        <input type="radio" id="sectorChart4" name="dataType4" value="sector" onclick="showData4('sector')">
+
+                        <label for="cityChart4">&nbsp;&nbsp;&nbsp;City:</label>
+                        <input type="radio" id="cityChart4" name="dataType4" value="city" onclick="showData4('city')">
+                    </form>
+
+                    <!-- Chart container -->
+                    <div class="chart-container">
+                        <canvas id="myChartC4" width="1400" height="600"></canvas>
+                    </div>
+                </div>
+                <script>
+                    let myChartC4 = null;
+                            
+                    function showData4(dataType4) {
+                        if (myChartC4 !== null) {
+                            myChartC4.destroy();
+                        }
+                            
+                        const dataC4 = [
+                            {% for itemC4 in modeldata %}
+                                {% if itemC4.region and itemC4.start_year and itemC4.sector and itemC4.City %}
+                                    {
+                                        region: "{{ itemC4.region }}",
+                                        sector: "{{ itemC4.sector }}",
+                                        city: "{{ itemC4.City }}",
+                                        startYear: {{ itemC4.start_year }}
+                                    },
+                                {% endif %}
+                            {% endfor %}
+                        ];
+                            
+                        let filteredData4 = [];
+                        let labels4 = [];
+                        let values4 = [];
+                            
+                        if (dataType4 === 'region') {
+                            filteredData4 = dataC4.filter(itemC4 => itemC4.region);
+                        } else if (dataType4 === 'sector') {
+                            filteredData4 = dataC4.filter(itemC4 => itemC4.sector);
+                        } else if (dataType4 === 'city') {
+                            filteredData4 = dataC4.filter(itemC4 => itemC4.city);
+                        }
+                            
+                        const uniqueLabels4 = new Set();
+                            
+                        filteredData4.forEach(itemC4 => {
+                            if (!uniqueLabels4.has(itemC4[dataType4])) {
+                                uniqueLabels4.add(itemC4[dataType4]);
+                                labels4.push(itemC4[dataType4]);
+                                values4.push(itemC4.startYear);
+                            }
+                        });
+                            
+                        function getRandomColorC4() {
+                            const r = Math.floor(Math.random() * 256);
+                            const g = Math.floor(Math.random() * 256);
+                            const b = Math.floor(Math.random() * 256);
+                            return `rgba(${r}, ${g}, ${b}, 0.6)`;
+                        }
+                            
+                        const regionColorsC4 = labels4.map(labelC4 => getRandomColorC4());
+                            
+                        const ctxC4 = document.getElementById('myChartC4').getContext('2d');
+                        myChartC4 = new Chart(ctxC4, {
+                            type: 'radar',
+                            data: {
+                                labels: labels4,
+                                datasets: [{
+                                    label: 'Start Year by ' + dataType4.toUpperCase(),
+                                    data: values4,
+                                    backgroundColor: regionColorsC4,
+                                    borderColor: regionColorsC4,
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scale: {
+                                    pointLabels: {
+                                        font: {
+                                            size: 14
+                                        }
+                                    }
+                                },
+                                responsive: true,
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: 'Start Year by ' + dataType4.toUpperCase()
+                                    },
+                                    legend: {
+                                        position: 'bottom'
+                                    }
+                                }
+                            }
+                        });
+                    }
+                </script>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

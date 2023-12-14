@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: black;
+
+    }
+
+    #navbar {
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(169, 169, 169, 0.2) 100%);
+      backdrop-filter: blur(10px);
+      border-right: 1px solid rgba(255, 255, 255, 0.3);
+      height: 100vh;
+      width: 120px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      transition: width 0.3s;
+    }
+
+    #navbar:hover {
+      width: 200px;
+    }
+
+    .nav-item {
+      text-align: center;
+      padding: 15px 0;
+      color: #333; /* Darker text color */
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .nav-item:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .icon {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    #content {
+      margin-left: 70px; /* Adjust this value based on the width of the expanded navbar */
+      padding: 20px;
+      
+      
+    }
+    h1{
+      margin-left: 450px;
+      text-shadow: 1px 1px #3d3b3b;
+      text-shadow: 1px 1px #f2eeee;
+      text-shadow: 1px 1px #fd7a7a;
+  
+    }
+  
+
+  </style>
+</head>
+<body>
+
+  <div id="navbar">
+    <br>
+    
+    <a href="#" class="nav-item"><b>DASHBOARD</b></a>
+    
+    <!-- Add more items as needed -->
+  </div>
+
+  
+  <div id="content">
+    
+    <h1>VISUALIZATION DASHBOARD</h1>
+
+  </div>
+
+
+</body>
+</html>
+
+
+
+{% block navbar %}
+  
+{% endblock navbar %}
